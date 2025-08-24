@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ThreadWeb - name",
-    "slug": "ThreadWeb - slug",
+    "name": "ThreadWeb",
+    "slug": "ThreadWeb",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
