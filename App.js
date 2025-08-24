@@ -14,6 +14,10 @@ export default function App() {
     name: '',
     email: '',
     message: '',
+    user: false,
+    creator: false,
+    retailer: false,
+    other: false,
   });
 
   const handleButtonPress = async () => {
@@ -49,24 +53,24 @@ export default function App() {
         
         // Wait 1 second, then clear form and hide it
         setTimeout(() => {
-          setFormData({ name: '', email: '', message: '' });
+          setFormData({ name: '', email: '', message: '', user: false, creator: false, retailer: false, other: false });
           setFormVisible(false);
           setFormSubmit(false);
-        }, 1000);
+        }, 1400);
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      
+     
       {/* Main content container */}
       <View style={styles.contentContainer}>
         {/* Emblem image */}
         <Image 
           source={require('./assets/Emblem w Text- ThreadWeb.png')}
           style={styles.emblemImage}
+          paddingBottom={formVisible ? 0 : 60}
           resizeMode="contain"
         />
         
@@ -88,6 +92,52 @@ export default function App() {
               value={formData.email}
               onChangeText={(text) => setFormData({ ...formData, email: text })}
             />
+            
+            {/* Checkbox row */}
+            <View style={styles.checkboxRow}>
+              <Text style={styles.checkboxLabel}>I am a:</Text>
+
+              <TouchableOpacity 
+                style={styles.checkboxContainer}
+                onPress={() => setFormData({ ...formData, user: !formData.user })}
+              >
+                <View style={[styles.checkbox, formData.user && styles.checkboxChecked]}>
+                  {formData.user && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+                </View>
+                <Text style={styles.checkboxLabel}>User</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.checkboxContainer}
+                onPress={() => setFormData({ ...formData, creator: !formData.creator })}
+              >
+                <View style={[styles.checkbox, formData.creator && styles.checkboxChecked]}>
+                  {formData.creator && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+                </View>
+                <Text style={styles.checkboxLabel}>Creator</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.checkboxContainer}
+                onPress={() => setFormData({ ...formData, retailer: !formData.retailer })}
+              >
+                <View style={[styles.checkbox, formData.retailer && styles.checkboxChecked]}>
+                  {formData.retailer && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+                </View>
+                <Text style={styles.checkboxLabel}>Retailer</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.checkboxContainer}
+                onPress={() => setFormData({ ...formData, other: !formData.other })}
+              >
+                <View style={[styles.checkbox, formData.other && styles.checkboxChecked]}>
+                  {formData.other && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+                </View>
+                <Text style={styles.checkboxLabel}>Other</Text>
+              </TouchableOpacity>
+            </View>
+            
             <TextInput
               style={messageFieldError ? styles.textInputError : styles.textInput}
               placeholder="Enter your message"
@@ -107,9 +157,6 @@ export default function App() {
             <Ionicons name="checkmark-circle" size={24} color="#10B981" style={styles.successIcon} />
           </View>
         )}
-        
-        {/* Spacing */}
-        <View style={styles.spacing} />
         
         {/* Blue button */}
         {!formSubmit && (
@@ -135,12 +182,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    height: '100%',
     paddingHorizontal: 40,
   },
   emblemImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 60,
+    width: '100%',
+    maxWidth: 300,
+    maxHeight: 200,
   },
   spacing: {
     height: 80,
@@ -213,6 +261,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    width: '100%',
+    maxWidth: 800,
+    marginBottom: 15,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#666',
+    borderRadius: 4,
+    marginRight: 8,
+    marginLeft: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  checkboxChecked: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
+  },
+  checkboxLabel: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
 

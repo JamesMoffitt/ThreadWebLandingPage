@@ -12,6 +12,10 @@ export interface ContactFormData {
   name: string
   email: string
   message: string
+  user: boolean
+  creator: boolean
+  retailer: boolean
+  other: boolean
 }
 
 // Database operations
@@ -26,9 +30,12 @@ export const contactAPI = {
             name: formData.name,
             email: formData.email,
             message: formData.message,
+            user: formData.user,
+            creator: formData.creator,
+            retailer: formData.retailer,
+            other: formData.other,
           }
         ])
-        .select()
 
       if (error) {
         console.error('Supabase error:', error)
