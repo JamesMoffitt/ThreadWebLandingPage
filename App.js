@@ -264,6 +264,8 @@ const styles = StyleSheet.create({
   },
   checkboxRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    rowGap: 10,
     width: '100%',
     maxWidth: 800,
     marginBottom: 15,
