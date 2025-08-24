@@ -1,12 +1,60 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useState } from 'react';
+import { contactAPI } from './lib/supabase';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
   const [formVisible, setFormVisible] = useState(false);
+  const [nameFieldError, setNameFieldError] = useState(false);
+  const [emailFieldError, setEmailFieldError] = useState(false);
+  const [messageFieldError, setMessageFieldError] = useState(false);
+  const [formSubmit, setFormSubmit] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
 
-  const handleButtonPress = () => {
-    setFormVisible(true);
+  const handleButtonPress = async () => {
+    if (!formVisible) {
+      setFormVisible(true);
+    } else {
+      setNameFieldError(false);
+      setEmailFieldError(false);
+      setMessageFieldError(false);
+      // Check that fields are filled
+      let formError = false;
+      if (formData.name === '' || formData.name === null ) {
+        formError = true;
+        setNameFieldError(true);
+      }
+      if (formData.email === '' || formData.email === null ) {
+        formError = true;
+        setEmailFieldError(true);
+      }
+      if (formData.message === '' || formData.message === null ) {
+        formError = true;
+        setMessageFieldError(true);
+      }
+      if (formError) {
+        return;
+      }
+
+      // Submit to Supabase
+      const result = await contactAPI.submitForm(formData);
+      
+      if (result.success) {
+        setFormSubmit(true);
+        
+        // Wait 1 second, then clear form and hide it
+        setTimeout(() => {
+          setFormData({ name: '', email: '', message: '' });
+          setFormVisible(false);
+          setFormSubmit(false);
+        }, 1000);
+      }
+    }
   };
 
   return (
@@ -23,26 +71,40 @@ export default function App() {
         />
         
         {/* Form fields - only visible when formVisible is true */}
-        {formVisible && (
+        {formVisible && !formSubmit && (
           <View style={styles.formContainer}>
             <TextInput
-              style={styles.textInput}
+              style={nameFieldError ? styles.textInputError : styles.textInput}
               placeholder="Enter your name"
               placeholderTextColor="#666"
+              value={formData.name}
+              onChangeText={(text) => setFormData({ ...formData, name: text })}
             />
             <TextInput
-              style={styles.textInput}
+              style={emailFieldError ? styles.textInputError : styles.textInput}
               placeholder="Enter your email"
               placeholderTextColor="#666"
               keyboardType="email-address"
+              value={formData.email}
+              onChangeText={(text) => setFormData({ ...formData, email: text })}
             />
             <TextInput
-              style={styles.textInput}
+              style={messageFieldError ? styles.textInputError : styles.textInput}
               placeholder="Enter your message"
               placeholderTextColor="#666"
               multiline
               numberOfLines={3}
+              value={formData.message}
+              onChangeText={(text) => setFormData({ ...formData, message: text })}
             />
+          </View>
+        )}
+        
+        {/* Success message - visible when formSubmit is true */}
+        {formSubmit && (
+          <View style={styles.successContainer}>
+            <Text style={styles.successText}>Message sent</Text>            
+            <Ionicons name="checkmark-circle" size={24} color="#10B981" style={styles.successIcon} />
           </View>
         )}
         
@@ -50,9 +112,13 @@ export default function App() {
         <View style={styles.spacing} />
         
         {/* Blue button */}
-        <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
-          <Text style={styles.buttonText}>I want to know more</Text>
-        </TouchableOpacity>
+        {!formSubmit && (
+          <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+            <Text style={styles.buttonText}>
+              {formVisible ? 'Send to the team' : 'I want to know more'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -102,6 +168,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     marginTop: 20,
+    alignItems: 'center',
   },
   textInput: {
     backgroundColor: '#1A1A1A',
@@ -113,6 +180,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: '#333',
+    width: '100%',
     maxWidth: 800,
   },
+  textInputError: {
+    backgroundColor: '#1A1A1A',
+    color: '#FFFFFF',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#FF0000',
+    width: '100%',
+    maxWidth: 800,
+  },
+  successContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    marginTop: 20,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  successIcon: {
+    marginLeft: 12,
+  },
+  successText: {
+    color: '#10B981',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 });
+
