@@ -73,7 +73,22 @@ export default function App() {
           paddingBottom={formVisible ? 0 : 60}
           resizeMode="contain"
         />
-        
+
+        {!formVisible && (
+          <Text 
+          style={{color: '#FFFFFF', paddingBottom: 50, fontSize: 16, textAlign: 'center', overflow: 'visible'}}
+          >
+            Shopping for clothes shouldn't consist of doom-scrolling retailer websites, just for them not to fit when they arrive.
+            <br />
+            <br />
+            <br />
+            Shop all brands, all retailers, but modelled by people that look like you. 
+            <br />
+            <br />
+            <br />
+            Test your style. See the fit. Find the items you want quicker.
+          </Text>
+        )}
         {/* Form fields - only visible when formVisible is true */}
         {formVisible && !formSubmit && (
           <View style={styles.formContainer}>
